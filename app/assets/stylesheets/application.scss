@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400..900&display=swap');
+
+@import "./globals.css";
+@import "./calendar.css"; /* calendar */
+
+html * {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}

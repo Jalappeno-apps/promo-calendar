@@ -6,6 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { format } from 'date-fns';
 import allLocales from '@fullcalendar/core/locales-all'; // Import all locales
 import axios from 'axios';
+import './Homepage.css';
 
 const API_URL = "/api/v1/promotions";
 
@@ -45,8 +46,8 @@ function Homepage() {
     const { start, end, ...rest } = info.event.extendedProps;
     setSelectedOffer({
       ...rest,
-      start: info.event.starts_at,
-      end: info.event.ends_at,
+      start: info.event.start,
+      end: info.event.end,
       title: info.event.title
     });
   };
@@ -108,7 +109,7 @@ function Homepage() {
         </div>
 
         {/* Calendar */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-2 bg-white shadow-lg rounded-lg">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
@@ -117,7 +118,7 @@ function Homepage() {
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: 'timeGridWeek,timeGridDay'
+              right: 'dayGridMonth,timeGridWeek,timeGridDay'
             }}
             events={filteredPromotions}
             eventClick={handleEventClick}

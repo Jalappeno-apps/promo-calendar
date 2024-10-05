@@ -1,4 +1,6 @@
-.fc {
+.fc { /* the calendar root */
+  margin: 0 auto;
+  overflow: scroll;
   font-family: "Montserrat", sans-serif;
 }
 
@@ -15,7 +17,7 @@
 }
 
 .fc-view-container { 
-  overflow-x: scroll; 
+  overflow: scroll !important; 
 }
 .fc-view.fc-agendaDay-view.fc-agenda-view{
   width: 500%;
