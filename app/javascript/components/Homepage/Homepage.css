@@ -1,0 +1,64 @@
+.fc {
+  font-family: 'Inter', sans-serif;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.5em;
+  color: #4c1d95;
+}
+
+.fc .fc-button {
+  background-color: #8b5cf6;
+  border: none;
+  box-shadow: none;
+  text-transform: capitalize;
+}
+
+.fc .fc-button:hover {
+  background-color: #7c3aed;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active, 
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #6d28d9;
+}
+
+.fc-event {
+  background-color: #8b5cf6;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.fc-event-title {
+  font-weight: 500;
+}
+
+.fc-timegrid-event .fc-event-time {
+  font-weight: 600;
+}
+
+.fc-col-header-cell {
+  background-color: #f3e8ff;
+}
+
+.fc-timegrid-slot {
+  height: 40px;
+}
+
+.fc-timegrid-axis {
+  background-color: #f3e8ff;
+}
+
+.fc-timegrid-slot-label {
+  color: #6b21a8;
+}
+
+.fc-day-today {
+  background-color: #f3e8ff !important;
+}
+
+.fc th, .fc td {
+  border-color: #e9d5ff;
+}
