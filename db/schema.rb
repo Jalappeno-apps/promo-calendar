@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_05_155046) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_05_204957) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -70,11 +70,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_155046) do
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.integer "promotion_kind"
-    t.text "recurring"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "translations", default: {}
     t.uuid "store_id"
+    t.integer "recurrence_frequency"
+    t.boolean "recurring", default: false
   end
 
   create_table "stores", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

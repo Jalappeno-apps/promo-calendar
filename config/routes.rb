@@ -16,4 +16,6 @@ Rails.application.routes.draw do
       resources :promotions, only: [:index]
     end
   end
+
+  resources :promotions, only: [:create]
 end

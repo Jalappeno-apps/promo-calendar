@@ -1,15 +1,15 @@
 ActiveAdmin.register Promotion do
-  permit_params :name, :address, :contact, :menu_url, :website, :instagram
+  permit_params :title, :desctription, :store_id, :recurring, :recurrence_frequency
 
   index do
     selectable_column
     id_column
-    column :name
-    column :title 
+    column :store_name
+    column :title
     column :promotion_kind
     column :starts_at
     column :ends_at
-    column :recurring
+    column :recurrence_frequency
 
     actions
   end
@@ -23,6 +23,8 @@ ActiveAdmin.register Promotion do
       f.input :description
       f.input :starts_at
       f.input :ends_at
+      f.input :recurrence_frequency
+      f.input :recurring
     end
     f.actions
   end

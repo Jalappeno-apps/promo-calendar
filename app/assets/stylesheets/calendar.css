@@ -1,7 +1,8 @@
-.fc { /* the calendar root */
+/*.fc { /* the calendar root */
   margin: 0 auto;
   overflow: scroll;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif !important;
+  height: 800px;
 }
 
 .fc .fc-toolbar-title {
@@ -18,7 +19,9 @@
 
 .fc-view-container { 
   overflow: scroll !important; 
+  overflow-y: auto; 
 }
+
 .fc-view.fc-agendaDay-view.fc-agenda-view{
   width: 500%;
 }
@@ -75,3 +78,19 @@
 .fc th, .fc td {
   border-color: #e9d5ff;
 }
+
+@media only screen and (max-width: 600px) {
+  .fc .fc-toolbar-title {
+    font-size: 1em;
+    color: #4c1d95;
+  }
+
+  .fc-event {
+    background-color: white;
+  }
+
+  .fc .fc-list-day-cushion, .fc .fc-list-table td {
+    padding: 8px 2px;
+  }
+}
+*/
