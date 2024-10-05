@@ -161,8 +161,8 @@ function Homepage() {
   };
 
   const handleCitySelect = (city) => {
-    setSelectedCity(JSON.parse(city));
-    if (map) { map.flyTo([selectedCity.latitude, selectedCity.longitude], 13); }
+    setSelectedCity(JSON.parse(city).name);
+    if (map) { map.flyTo([JSON.parse(city).latitude, JSON.parse(city).longitude], 13); }
   };
 
   const toggleMapExpansion = () => {
@@ -184,7 +184,7 @@ function Homepage() {
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
           <MapEventHandler onMoveEnd={debouncedHandleMapMoveEnd} />
           {filteredPromotions.map((promo, index) => (
@@ -218,13 +218,13 @@ function Homepage() {
   );
 
   const renderDesktopView = () => (
-    <div className="z-10 flex flex-col md:flex-row" style={{ height: '800px' }}>
+    <div className="z-10 flex flex-col md:flex-row bg-white p-2 rounded-md" style={{ height: '800px' }}>
       <div className="w-full md:w-1/3 p-4 overflow-y-auto bg-gray-100 mb-4 md:mb-0 md:mr-4">
         <h2 className="text-xl font-bold mb-4">Promotions</h2>
         {visiblePromotions.map((promo, index) => (
           <div 
             key={index} 
-            className="mb-4 p-2 bg-white rounded shadow cursor-pointer hover:bg-gray-50"
+            className="mb-4 p-2 bg-white rounded shadow cursor-pointer hover:text-white hover:bg-purple-700 transition duration-300"
             onClick={() => handlePromoClick(promo)}
           >
             <h3 className="font-bold">{promo.title}</h3>
@@ -265,7 +265,7 @@ function Homepage() {
     <div className="min-h-screen bg-purple-50 p-1">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between">
-          <h1 className="text-3xl font-bold text-purple-900 mb-6 text-center">Promotions</h1>
+          <h1 className="text-3xl font-bold text-purple-900 mb-6 text-center">Kalendarz Promocji</h1>
           
           {/* Language Selector */}
           <div className="mb-6 text-right">
@@ -292,10 +292,10 @@ function Homepage() {
               onChange={(e) => handleCitySelect(e.target.options[e.target.selectedIndex].dataset.value)}
               className="w-full block rounded-md border-purple-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
             >
-              <option data-value='{"latitude": "4", "longitude": "55"}'>All Stores</option>
-              <option data-value='{"latitude": "42", "longitude": "55"}'>Store A</option>
-              <option data-value='{"latitude": "1", "longitude": "55"}'>Store B</option>
-              <option data-value='{"latitude": "65", "longitude": "55"}'>Store C</option>
+              <option data-value='{"name": "Warsaw", "latitude": "52.2297", "longitude": "21.0122"}'>Warsaw</option>
+              <option data-value='{"name": "Krakow", "latitude": "50.0647", "longitude": "19.9450"}'>Krakow</option>
+              <option data-value='{"name": "Łódź", "latitude": "51.7593", "longitude": "19.4559"}'>Łódź</option>
+              <option data-value='{"name": "Gdańsk", "latitude": "54.3520", "longitude": "18.6466"}'>Gdańsk</option>
             </select>
 
             <select
@@ -341,7 +341,7 @@ function Homepage() {
 
       {/* Modal */}
       {selectedOffer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-10">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-10" onClick={() => setSelectedOffer(null)}>
           <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
             <button 
               onClick={() => setSelectedOffer(null)}
