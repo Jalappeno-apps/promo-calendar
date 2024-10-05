@@ -6,7 +6,7 @@
     "esbuild": "^0.24.0"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build": "node config/esbuild.config.js",
     "tailwind:dev": "tailwindcss -c config/tailwind.config.js --watch -o app/assets/builds/tailwind.css",
     "tailwind:compile": "tailwindcss -c config/tailwind.config.js -m -o app/assets/builds/tailwind.css",
     "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
@@ -30,6 +30,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "esbuild-envfile-plugin": "^1.0.7",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.447.0",
     "postcss": "^8.4.47",
     "postcss-flexbugs-fixes": "^5.0.2",
@@ -38,6 +40,8 @@
     "react": "^18.3.1",
     "react-big-calendar": "^1.15.0",
     "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
+    "react-leaflet-markercluster": "^3.0.0-rc1",
     "react-router-dom": "^6.26.2",
     "sass": "^1.79.4",
     "tailwind-merge": "^2.5.3",

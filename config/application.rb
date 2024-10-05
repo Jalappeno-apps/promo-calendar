@@ -26,5 +26,7 @@ module CalendarApp
     config.generators do |generate|
       generate.orm :active_record, primary_key_type: :uuid
     end
+
+    config.hosts << "stunning-lionfish-enormously.ngrok-free.app"
   end
 end

@@ -1,75 +1,30 @@
-.fc {
-  font-family: "Montserrat", sans-serif;
+.mobile-view {
+  position: relative;
+  height: 100vh;
 }
 
-.fc .fc-toolbar-title {
-  font-size: 1.5em;
-  color: #4c1d95;
+.map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30vh;
+  transition: all 0.3s ease;
 }
 
-.fc .fc-button {
-  background-color: #8b5cf6;
-  border: none;
-  box-shadow: none;
-  text-transform: capitalize;
+.map-container.expanded {
+  height: 100vh;
+  z-index: 10;
 }
 
-.fc-view-container { 
-  overflow-x: scroll; 
-}
-.fc-view.fc-agendaDay-view.fc-agenda-view{
-  width: 500%;
-}
-/* **For 2 day view** */
-.fc-view.fc-agendaTwoDay-view.fc-agenda-view{
-  width: 500%;
-} 
-
-.fc .fc-button:hover {
-  background-color: #7c3aed;
-}
-
-.fc .fc-button-primary:not(:disabled).fc-button-active, 
-.fc .fc-button-primary:not(:disabled):active {
-  background-color: #6d28d9;
-}
-
-.fc-event {
-  background-color: #8b5cf6;
-  border: none;
-  border-radius: 4px;
-  padding: 2px 4px;
-  cursor: pointer;
-}
-
-.fc-event-title {
-  font-weight: 500;
-}
-
-.fc-timegrid-event .fc-event-time {
-  font-weight: 600;
-}
-
-.fc-col-header-cell {
-  background-color: #f3e8ff;
-}
-
-.fc-timegrid-slot {
-  height: 40px;
-}
-
-.fc-timegrid-axis {
-  background-color: #f3e8ff;
-}
-
-.fc-timegrid-slot-label {
-  color: #6b21a8;
-}
-
-.fc-day-today {
-  background-color: #f3e8ff !important;
-}
-
-.fc th, .fc td {
-  border-color: #e9d5ff;
+.list-container {
+  position: absolute;
+  top: 25vh;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
 }
