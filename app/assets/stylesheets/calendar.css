@@ -82,7 +82,8 @@
 
 @media only screen and (max-width: 600px) {
   .fc .fc-toolbar-title {
-    font-size: 1em;
+    font-size: 1.2em;
+    font-weight: 600;
     color: #4c1d95;
   }
 
@@ -94,4 +95,3 @@
     padding: 8px 2px;
   }
 }
-*/

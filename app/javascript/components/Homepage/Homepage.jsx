@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
-import { format } from 'date-fns';
+import { format, addMonths } from 'date-fns';
 import allLocales from '@fullcalendar/core/locales-all';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
@@ -13,9 +13,15 @@ import { debounce } from 'lodash';
 import 'leaflet/dist/leaflet.css';
 import './Homepage.css';
 
-const API_URL = "/api/v1/promotions.json";
+const API_URL = "/api/v1";
 
-function getAPIData() { return axios.get(API_URL).then((response) => response.data); }
+function getPromotionsData(city) { return axios.get(`${API_URL}/promotions.json?city=${city}`).then((response) => response.data); }
+function getCitiesData() { return axios.get(`${API_URL}/cities.json`).then((response) => response.data); }
+
+// Get today's date
+const today = new Date();
+// Get the date one month from today
+const oneMonthLater = addMonths(today, 1);
 
 function DesktopCalendar({ filteredPromotions, locale, handleEventClick }) {
   return (
@@ -39,6 +45,20 @@ function DesktopCalendar({ filteredPromotions, locale, handleEventClick }) {
       height={800}
       slotDuration="00:30:00"
       expandRows={true}
+      validRange={{
+        start: today,               // The user can navigate from today
+        end: oneMonthLater          // Until one month later
+      }}
+      dateSet={(info) => {
+        const currentDate = info.start;
+        if (currentDate > oneMonthLater) {
+          // Navigate back if user attempts to go beyond the valid range
+          info.view.calendar.prev();
+        } else if (currentDate < today) {
+          // Navigate forward if user attempts to go before today
+          info.view.calendar.next();
+        }
+      }}
     />
   );
 }
@@ -48,17 +68,39 @@ function MobileCalendar({ filteredPromotions, locale, handleEventClick }) {
     <FullCalendar
       plugins={[listPlugin, dayGridPlugin, interactionPlugin]}
       initialView="listWeek"
+      views={{
+        listWeek: { buttonText: 'week' }
+      }}
       locales={allLocales}
       locale={locale}
       headerToolbar={{
-        left: 'prev,next',
-        center: 'title',
-        right: 'today'
+        left: 'title',
+        center: 'listWeek dayGridMonth',
+        right: 'prev,next'
+      }}
+      titleFormat={{
+        month: 'short',  // Display full month name
+        day: 'numeric', // Display day of the month
+        // Exclude 'year' to omit the year from the title
       }}
       events={filteredPromotions}
       eventClick={handleEventClick}
       height={'auto'}
       contentHeight="auto"
+      validRange={{
+        start: today,               // The user can navigate from today
+        end: oneMonthLater          // Until one month later
+      }}
+      dateSet={(info) => {
+        const currentDate = info.start;
+        if (currentDate > oneMonthLater) {
+          // Navigate back if user attempts to go beyond the valid range
+          info.view.calendar.prev();
+        } else if (currentDate < today) {
+          // Navigate forward if user attempts to go before today
+          info.view.calendar.next();
+        }
+      }}
     />
   );
 }
@@ -92,7 +134,20 @@ function Homepage() {
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [map, setMap] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [selectedCity, setSelectedCity] = useState('warsaw');
+  const [availableCities, setAvailableCities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedCityName, setSelectedCityName] = useState('Warsaw');
+
+  useEffect(() => {
+    getCitiesData().then((cities) => {
+      setAvailableCities(cities);
+      if (cities.length > 0) {
+        const defaultCity = cities[0]; // Set the first city as the default
+        setSelectedCity(defaultCity);
+        setSelectedCityName(defaultCity.title); // Display city name in the dropdown
+      }
+    });    
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -103,27 +158,31 @@ function Homepage() {
   }, []);
 
   useEffect(() => {
-    let mounted = true;
+    if (selectedCity) {
+      let mounted = true;
+      getPromotionsData(selectedCity).then((promotions) => {
+        if (mounted) {
+          console.log(promotions);
 
-    getAPIData().then((promotions) => {
-      if (mounted) {
-        const processedPromotions = promotions.map(({ translations, ...rest }) => ({
-          title: translations[locale].title,
-          description: translations[locale].description,
-          latitude: rest.latitude || (Math.random() * (41 - 40) + 51.9),
-          longitude: rest.longitude || (Math.random() * (-73 - -74) + 20.4),
-          ...rest,
-        }));
-        setPromotions(processedPromotions);
-        setVisiblePromotions(processedPromotions);
-      }
-    });
-    return () => (mounted = false);
-  }, []);
+          const processedPromotions = promotions.map(({ translations, ...rest }) => ({
+            title: translations[locale].title,
+            description: translations[locale].description,
+            latitude: rest.storeCoordinates?.latitude || (Math.random() * (41 - 40) + 51.9),
+            longitude: rest.storeCoordinates?.longitude || (Math.random() * (-73 - -74) + 20.4),
+            ...rest,
+          }));
+          setPromotions(processedPromotions);
+          setVisiblePromotions(processedPromotions);
+        }
+      });
+      return () => (mounted = false);
+    }
+  }, [selectedCity, locale]);
 
   const filteredPromotions = promotions.filter(promo => 
-    (selectedStore === 'All' || promo.store === selectedStore) &&
-    (selectedType === 'All' || promo.type === selectedType)
+    (promo.cityId === selectedCity?.id) 
+    // &&
+    // (selectedType === 'All' || promo.type === selectedType)
   );
 
   const handleEventClick = (info) => {
@@ -147,8 +206,10 @@ function Homepage() {
   };
 
   const handleMapMoveEnd = (bounds) => {
+    console.log(filteredPromotions);
+
     const visiblePromos = filteredPromotions.filter(promo => 
-      bounds.contains([promo.latitude, promo.longitude])
+      bounds.contains([promo.storeCoordinates?.latitude, promo.storeCoordinates?.longitude])
     );
     setVisiblePromotions(visiblePromos);
   };
@@ -157,11 +218,12 @@ function Homepage() {
 
   const handlePromoClick = (promo) => {
     setSelectedOffer(promo);
-    if (map) { map.flyTo([promo.latitude, promo.longitude], 13); }
+    if (map) { map.flyTo([promo.storeCoordinates?.latitude, promo.storeCoordinates?.longitude], 13); }
   };
 
   const handleCitySelect = (city) => {
-    setSelectedCity(JSON.parse(city).name);
+    setSelectedCity(JSON.parse(city));
+    setSelectedCityName(JSON.parse(city).name);
     if (map) { map.flyTo([JSON.parse(city).latitude, JSON.parse(city).longitude], 13); }
   };
 
@@ -176,7 +238,7 @@ function Homepage() {
       >
         <div className="absolute right-0" style={{zIndex: 5000}} onClick={toggleMapExpansion}> ZOOM </div>
         <MapContainer 
-          center={[52.2297, 21.0122]} 
+          center={[selectedCity.coordinates?.latitude, selectedCity.coordinates?.longitude]}
           zoom={11} 
           style={{ height: '100%', width: '100%' }}
           ref={setMap}
@@ -208,9 +270,16 @@ function Homepage() {
             className="mb-4 p-2 bg-white rounded shadow cursor-pointer hover:bg-gray-50"
             onClick={() => handlePromoClick(promo)}
           >
-            <h3 className="font-bold">{promo.title}</h3>
-            <p>{promo.store}</p>
-            <p>{formatDate(promo.start)}</p>
+            <div className="flex justify-between w-full">
+              <div className="w-3/4">
+                <h3 className="font-bold">{promo.title}</h3>
+                <p>{promo.storeName}</p>
+              </div>
+              <div className="w-1/4 flex flex-col">
+                <small className="text-gray-600 group-hover:text-white">{format(promo.start, 'LLL d, Y')}</small>
+                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)}</small>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -224,18 +293,25 @@ function Homepage() {
         {visiblePromotions.map((promo, index) => (
           <div 
             key={index} 
-            className="mb-4 p-2 bg-white rounded shadow cursor-pointer hover:text-white hover:bg-purple-700 transition duration-300"
+            className="mb-4 w-full p-2 group bg-white rounded shadow cursor-pointer hover:text-white hover:bg-purple-700 transition duration-300"
             onClick={() => handlePromoClick(promo)}
           >
-            <h3 className="font-bold">{promo.title}</h3>
-            <p>{promo.store}</p>
-            <p>{formatDate(promo.start)}</p>
+            <div className="flex justify-between w-full">
+              <div>
+                <h3 className="font-bold">{promo.title}</h3>
+                <p>{promo.storeName}</p>
+              </div>
+              <div className="flex flex-col">
+                <small className="text-gray-600 group-hover:text-white">{formatDate(promo.start)}</small>
+                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)}</small>
+              </div>
+            </div>
           </div>
         ))}
       </div>
       <div className="z-10  w-full md:w-2/3 h-full">
         <MapContainer 
-          center={[52.2297, 21.0122]} 
+          center={[selectedCity.coordinates?.latitude, selectedCity.coordinates?.longitude]}
           zoom={11} 
           style={{ height: '100%', width: '100%' }}
           ref={setMap}
@@ -265,7 +341,7 @@ function Homepage() {
     <div className="min-h-screen bg-purple-50 p-1">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between">
-          <h1 className="text-3xl font-bold text-purple-900 mb-6 text-center">Kalendarz Promocji</h1>
+          <h1 className="text-2xl font-bold text-purple-900 mb-6 text-center">Kalendarz Promocji</h1>
           
           {/* Language Selector */}
           <div className="mb-6 text-right">
@@ -288,14 +364,17 @@ function Homepage() {
         <div className="flex gap-2 justify-between mb-6">
           <div className="flex gap-2">
             <select
-              value={selectedCity}
+              value={selectedCityName}
               onChange={(e) => handleCitySelect(e.target.options[e.target.selectedIndex].dataset.value)}
               className="w-full block rounded-md border-purple-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
             >
-              <option data-value='{"name": "Warsaw", "latitude": "52.2297", "longitude": "21.0122"}'>Warsaw</option>
-              <option data-value='{"name": "Krakow", "latitude": "50.0647", "longitude": "19.9450"}'>Krakow</option>
-              <option data-value='{"name": "Łódź", "latitude": "51.7593", "longitude": "19.4559"}'>Łódź</option>
-              <option data-value='{"name": "Gdańsk", "latitude": "54.3520", "longitude": "18.6466"}'>Gdańsk</option>
+              {
+                availableCities.map((city, index) => (
+                  <option data-value={`{"id": "${city.id}", "name": "${city.title}", "latitude": "${city.coordinates.latitude}", "longitude": "${city.coordinates.longitude}"}`}>
+                    {city.title}
+                  </option>
+                ))
+              }
             </select>
 
             <select
