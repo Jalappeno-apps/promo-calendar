@@ -8,7 +8,8 @@
     "build:all": "npm run build && npm run tailwind:compile",
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --loader:.png=file",
     "tailwind:dev": "tailwindcss -c config/tailwind.config.js --watch -o app/assets/builds/tailwind.css",
-    "tailwind:compile": "tailwindcss -c config/tailwind.config.js -m -o app/assets/builds/tailwind.css"
+    "tailwind:compile": "tailwindcss -c config/tailwind.config.js -m -o app/assets/builds/tailwind.css",
+    "build:css": "echo 'none'"
   },
   "dependencies": {
     "esbuild": "^0.24.0",
