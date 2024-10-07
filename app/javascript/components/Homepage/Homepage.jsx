@@ -10,12 +10,14 @@ import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { debounce } from 'lodash';
+import Cookies from 'js-cookie';
+
 import 'leaflet/dist/leaflet.css';
 import './Homepage.css';
 
 const API_URL = "/api/v1";
 
-function getPromotionsData(city) { return axios.get(`${API_URL}/promotions.json?city=${city}`).then((response) => response.data); }
+function getPromotionsData(city, locale='en') { return axios.get(`${API_URL}/promotions.json?city_id=${city}&locale=${locale}`).then((response) => response.data); }
 function getCitiesData() { return axios.get(`${API_URL}/cities.json`).then((response) => response.data); }
 
 // Get today's date
@@ -138,6 +140,21 @@ function Homepage() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedCityName, setSelectedCityName] = useState('Warsaw');
 
+  const getLanguageCookie = () => {
+    const lang = Cookies.get("locale");
+    if(lang) { return lang }
+  };
+
+  useEffect(() => {
+    if(getLanguageCookie()) {
+      setLocale(getLanguageCookie())
+    }
+  }, []);
+
+  useEffect(() => {
+    Cookies.set('locale', locale);
+  }, [locale])
+
   useEffect(() => {
     getCitiesData().then((cities) => {
       setAvailableCities(cities);
@@ -160,13 +177,13 @@ function Homepage() {
   useEffect(() => {
     if (selectedCity) {
       let mounted = true;
-      getPromotionsData(selectedCity).then((promotions) => {
+      getPromotionsData(selectedCity.id, locale).then((promotions) => {
         if (mounted) {
           console.log(promotions);
 
-          const processedPromotions = promotions.map(({ translations, ...rest }) => ({
-            title: translations[locale].title,
-            description: translations[locale].description,
+          const processedPromotions = promotions.map(({ ...rest }) => ({
+            title: rest.title,
+            description: rest.description,
             latitude: rest.storeCoordinates?.latitude || (Math.random() * (41 - 40) + 51.9),
             longitude: rest.storeCoordinates?.longitude || (Math.random() * (-73 - -74) + 20.4),
             ...rest,
@@ -277,7 +294,7 @@ function Homepage() {
               </div>
               <div className="w-1/4 flex flex-col">
                 <small className="text-gray-600 group-hover:text-white">{format(promo.start, 'LLL d, Y')}</small>
-                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)}</small>
+                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)} - {formatTime(promo.end)}</small>
               </div>
             </div>
           </div>
@@ -303,7 +320,7 @@ function Homepage() {
               </div>
               <div className="flex flex-col">
                 <small className="text-gray-600 group-hover:text-white">{formatDate(promo.start)}</small>
-                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)}</small>
+                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)} - {formatTime(promo.end)}</small>
               </div>
             </div>
           </div>
@@ -352,10 +369,6 @@ function Homepage() {
             >
               <option value="en">English</option>
               <option value="pl">Polish</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-              <option value="zh-cn">中文</option>
-              <option value="ja">日本語</option>
             </select>
           </div>
         </div>

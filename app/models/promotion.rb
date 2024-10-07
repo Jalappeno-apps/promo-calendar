@@ -4,7 +4,8 @@ class Promotion < ApplicationRecord
   enum recurrence_frequency: { weekly: 0, biweekly: 1, monthly: 2, annually: 3, daily: 4 }
 
   belongs_to :store
-  translates :title, :description
+
+  translates :title, :description, fallbacks: { pl: :en }
   validates :starts_at, presence: true
 
   delegate :name, to: :store
