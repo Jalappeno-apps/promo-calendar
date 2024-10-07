@@ -17,12 +17,12 @@ esbuild.context({
     '.jpg': 'file',
   },
   plugins: [envFilePlugin],
-})
+}).catch(() => process.exit(1));
 // uncomment on dev build
 // .then((r) => {
 //   console.log('✨ Build succeeded.');
 
-//   r.watch();
-//   console.log('watching...');
+//   r.watch();[
+//   console.log('watching.]..');
 // })
-// .catch(() => process.exit(1));
+// 

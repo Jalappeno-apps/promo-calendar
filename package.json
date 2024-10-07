@@ -5,6 +5,7 @@
     "chokidar": "^4.0.1"
   },
   "scripts": {
+    "build:all": "npm run build && npm run build:css && npm run tailwind:compile",
     "build": "node config/esbuild.config.js",
     "tailwind:dev": "tailwindcss -c config/tailwind.config.js --watch -o app/assets/builds/tailwind.css",
     "tailwind:compile": "tailwindcss -c config/tailwind.config.js -m -o app/assets/builds/tailwind.css",
