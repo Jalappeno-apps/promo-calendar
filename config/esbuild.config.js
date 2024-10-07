@@ -18,10 +18,11 @@ esbuild.context({
   },
   plugins: [envFilePlugin],
 })
-.then((r) => {
-  console.log('✨ Build succeeded.');
+// uncomment on dev build
+// .then((r) => {
+//   console.log('✨ Build succeeded.');
 
-  r.watch();
-  console.log('watching...');
-})
-.catch(() => process.exit(1));
+//   r.watch();
+//   console.log('watching...');
+// })
+// .catch(() => process.exit(1));
