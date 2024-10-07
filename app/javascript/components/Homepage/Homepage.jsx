@@ -179,8 +179,6 @@ function Homepage() {
       let mounted = true;
       getPromotionsData(selectedCity.id, locale).then((promotions) => {
         if (mounted) {
-          console.log(promotions);
-
           const processedPromotions = promotions.map(({ ...rest }) => ({
             title: rest.title,
             description: rest.description,
@@ -223,8 +221,6 @@ function Homepage() {
   };
 
   const handleMapMoveEnd = (bounds) => {
-    console.log(filteredPromotions);
-
     const visiblePromos = filteredPromotions.filter(promo => 
       bounds.contains([promo.storeCoordinates?.latitude, promo.storeCoordinates?.longitude])
     );
