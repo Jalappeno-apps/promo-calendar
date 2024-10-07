@@ -5,11 +5,10 @@
     "chokidar": "^4.0.1"
   },
   "scripts": {
-    "build:all": "npm run build && npm run build:css && npm run tailwind:compile",
+    "build:all": "npm run build && npm run tailwind:compile",
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --loader:.png=file",
     "tailwind:dev": "tailwindcss -c config/tailwind.config.js --watch -o app/assets/builds/tailwind.css",
-    "tailwind:compile": "tailwindcss -c config/tailwind.config.js -m -o app/assets/builds/tailwind.css",
-    "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
+    "tailwind:compile": "tailwindcss -c config/tailwind.config.js -m -o app/assets/builds/tailwind.css"
   },
   "dependencies": {
     "esbuild": "^0.24.0",
