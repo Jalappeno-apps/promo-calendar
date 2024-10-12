@@ -1,19 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import listPlugin from '@fullcalendar/list';
-import interactionPlugin from '@fullcalendar/interaction';
 import { format, addMonths } from 'date-fns';
-import allLocales from '@fullcalendar/core/locales-all';
+import { MobileCalendar, DesktopCalendar } from './Calendars.jsx';
+import { MobileMap, DesktopMap } from './Maps.jsx';
+
 import axios from 'axios';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
 
 import 'leaflet/dist/leaflet.css';
-import './Homepage.css';
+import './styles/Homepage.css';
 
 const API_URL = "/api/v1";
 
@@ -24,106 +19,6 @@ function getCitiesData() { return axios.get(`${API_URL}/cities.json`).then((resp
 const today = new Date();
 // Get the date one month from today
 const oneMonthLater = addMonths(today, 1);
-
-function DesktopCalendar({ filteredPromotions, locale, handleEventClick }) {
-  return (
-    <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-      initialView="timeGridWeek"
-      locales={allLocales}
-      locale={locale}
-      headerToolbar={{
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      }}
-      events={filteredPromotions}
-      eventClick={handleEventClick}
-      contentHeight="800"
-      slotMinTime="00:00:00"
-      slotMaxTime="24:00:00"
-      scrollTime="00:00:00"
-      allDaySlot={false}
-      height={800}
-      slotDuration="00:30:00"
-      expandRows={true}
-      validRange={{
-        start: today,               // The user can navigate from today
-        end: oneMonthLater          // Until one month later
-      }}
-      dateSet={(info) => {
-        const currentDate = info.start;
-        if (currentDate > oneMonthLater) {
-          // Navigate back if user attempts to go beyond the valid range
-          info.view.calendar.prev();
-        } else if (currentDate < today) {
-          // Navigate forward if user attempts to go before today
-          info.view.calendar.next();
-        }
-      }}
-    />
-  );
-}
-
-function MobileCalendar({ filteredPromotions, locale, handleEventClick }) {
-  return (
-    <FullCalendar
-      plugins={[listPlugin, dayGridPlugin, interactionPlugin]}
-      initialView="listWeek"
-      views={{
-        listWeek: { buttonText: 'week' }
-      }}
-      locales={allLocales}
-      locale={locale}
-      headerToolbar={{
-        left: 'title',
-        center: 'listWeek dayGridMonth',
-        right: 'prev,next'
-      }}
-      titleFormat={{
-        month: 'short',  // Display full month name
-        day: 'numeric', // Display day of the month
-        // Exclude 'year' to omit the year from the title
-      }}
-      events={filteredPromotions}
-      eventClick={handleEventClick}
-      height={'auto'}
-      contentHeight="auto"
-      validRange={{
-        start: today,               // The user can navigate from today
-        end: oneMonthLater          // Until one month later
-      }}
-      dateSet={(info) => {
-        const currentDate = info.start;
-        if (currentDate > oneMonthLater) {
-          // Navigate back if user attempts to go beyond the valid range
-          info.view.calendar.prev();
-        } else if (currentDate < today) {
-          // Navigate forward if user attempts to go before today
-          info.view.calendar.next();
-        }
-      }}
-    />
-  );
-}
-
-// Fix for default marker icon
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('../marker.png'),
-  iconUrl: require('../marker.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-});
-
-function MapEventHandler({ onMoveEnd }) {
-  const map = useMapEvents({
-    moveend: () => {
-      const bounds = map.getBounds();
-      onMoveEnd(bounds);
-    },
-  });
-  return null;
-}
 
 function Homepage() {
   const [promotions, setPromotions] = useState([]);
@@ -194,11 +89,7 @@ function Homepage() {
     }
   }, [selectedCity, locale]);
 
-  const filteredPromotions = promotions.filter(promo => 
-    (promo.cityId === selectedCity?.id) 
-    // &&
-    // (selectedType === 'All' || promo.type === selectedType)
-  );
+  const filteredPromotions = promotions.filter(promo => (promo.cityId === selectedCity?.id));
 
   const handleEventClick = (info) => {
     const { start, end, ...rest } = info.event.extendedProps;
@@ -244,112 +135,6 @@ function Homepage() {
     setIsMapExpanded(!isMapExpanded);
   };
 
-  const renderMobileView = () => (
-    <div className="mobile-view">
-      <div 
-        className={`z-10 map-container ${isMapExpanded ? 'expanded' : ''}`}
-      >
-        <div className="absolute right-0" style={{zIndex: 5000}} onClick={toggleMapExpansion}> ZOOM </div>
-        <MapContainer 
-          center={[selectedCity.coordinates?.latitude, selectedCity.coordinates?.longitude]}
-          zoom={11} 
-          style={{ height: '100%', width: '100%' }}
-          ref={setMap}
-          scrollWheelZoom={false}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          />
-          <MapEventHandler onMoveEnd={debouncedHandleMapMoveEnd} />
-          {filteredPromotions.map((promo, index) => (
-            <Marker
-              key={index}
-              position={[promo.latitude, promo.longitude]}
-            >
-              <Popup>
-                <h2>{promo.title}</h2>
-                <p>{promo.description}</p>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-      <div className="list-container">
-        <h2 className="text-xl font-bold mb-4">Promotions</h2>
-        {visiblePromotions.map((promo, index) => (
-          <div 
-            key={index} 
-            className="mb-4 p-2 bg-white rounded shadow cursor-pointer hover:bg-gray-50"
-            onClick={() => handlePromoClick(promo)}
-          >
-            <div className="flex justify-between w-full">
-              <div className="w-3/4">
-                <h3 className="font-bold">{promo.title}</h3>
-                <p>{promo.storeName}</p>
-              </div>
-              <div className="w-1/4 flex flex-col">
-                <small className="text-gray-600 group-hover:text-white">{format(promo.start, 'LLL d, Y')}</small>
-                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)} - {formatTime(promo.end)}</small>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderDesktopView = () => (
-    <div className="z-10 flex flex-col md:flex-row bg-white p-2 rounded-md" style={{ height: '800px' }}>
-      <div className="w-full md:w-1/3 p-4 overflow-y-auto bg-gray-100 mb-4 md:mb-0 md:mr-4">
-        <h2 className="text-xl font-bold mb-4">Promotions</h2>
-        {visiblePromotions.map((promo, index) => (
-          <div 
-            key={index} 
-            className="mb-4 w-full p-2 group bg-white rounded shadow cursor-pointer hover:text-white hover:bg-purple-700 transition duration-300"
-            onClick={() => handlePromoClick(promo)}
-          >
-            <div className="flex justify-between w-full">
-              <div>
-                <h3 className="font-bold">{promo.title}</h3>
-                <p>{promo.storeName}</p>
-              </div>
-              <div className="flex flex-col">
-                <small className="text-gray-600 group-hover:text-white">{formatDate(promo.start)}</small>
-                <small className="text-gray-600 group-hover:text-white">{formatTime(promo.start)} - {formatTime(promo.end)}</small>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="z-10  w-full md:w-2/3 h-full">
-        <MapContainer 
-          center={[selectedCity.coordinates?.latitude, selectedCity.coordinates?.longitude]}
-          zoom={11} 
-          style={{ height: '100%', width: '100%' }}
-          ref={setMap}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          />
-          <MapEventHandler onMoveEnd={handleMapMoveEnd} />
-          {filteredPromotions.map((promo, index) => (
-            <Marker
-              key={index}
-              position={[promo.latitude, promo.longitude]}
-            >
-              <Popup>
-                <h2>{promo.title}</h2>
-                <p>{promo.description}</p>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-purple-50 p-1">
       <div className="max-w-7xl mx-auto">
@@ -379,14 +164,14 @@ function Homepage() {
             >
               {
                 availableCities.map((city, index) => (
-                  <option data-value={`{"id": "${city.id}", "name": "${city.title}", "latitude": "${city.coordinates.latitude}", "longitude": "${city.coordinates.longitude}"}`}>
+                  <option key={city.id} data-value={`{"id": "${city.id}", "name": "${city.title}", "latitude": "${city.coordinates.latitude}", "longitude": "${city.coordinates.longitude}"}`}>
                     {city.title}
                   </option>
                 ))
               }
             </select>
 
-            <select
+            {/*<select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
               className="w-full block rounded-md border-purple-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
@@ -395,7 +180,7 @@ function Homepage() {
               <option value="Discount">Discount</option>
               <option value="BOGO">BOGO</option>
               <option value="Clearance">Clearance</option>
-            </select>
+            </select>*/}
           </div>
           <button
             onClick={() => setShowMap(!showMap)}
@@ -407,8 +192,29 @@ function Homepage() {
 
         {/* Calendar/Map View */}
         {showMap ? (
-          isMobile ? renderMobileView() : renderDesktopView()
-        ) : (
+          isMobile ? 
+          <MobileMap 
+            isMapExpanded={isMapExpanded}
+            toggleMapExpansion={toggleMapExpansion}
+            selectedCity={selectedCity}
+            setMap={setMap}
+            handleMapMoveEnd={handleMapMoveEnd}
+            debouncedHandleMapMoveEnd={debouncedHandleMapMoveEnd}
+            filteredPromotions={filteredPromotions}
+            visiblePromotions={visiblePromotions}
+            handlePromoClick={handlePromoClick}
+          /> : <DesktopMap
+            isMapExpanded={isMapExpanded}
+            toggleMapExpansion={toggleMapExpansion}
+            selectedCity={selectedCity}
+            setMap={setMap}
+            handleMapMoveEnd={handleMapMoveEnd}
+            debouncedHandleMapMoveEnd={debouncedHandleMapMoveEnd}
+            filteredPromotions={filteredPromotions}
+            visiblePromotions={visiblePromotions}
+            handlePromoClick={handlePromoClick}
+          />)
+        : (
           <div className="p-2 bg-white shadow-lg rounded-lg">
             {isMobile ? (
               <MobileCalendar
