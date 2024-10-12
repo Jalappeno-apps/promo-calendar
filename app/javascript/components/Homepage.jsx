@@ -22,8 +22,8 @@ const oneMonthLater = addMonths(today, 1);
 function Homepage() {
   const [promotions, setPromotions] = useState([]);
   const [visiblePromotions, setVisiblePromotions] = useState([]);
-  const [selectedStore, setSelectedStore] = useState('All');
-  const [selectedType, setSelectedType] = useState('All');
+  // const [selectedStore, setSelectedStore] = useState('All');
+  // const [selectedType, setSelectedType] = useState('All');
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [locale, setLocale] = useState('en');
   const [showMap, setShowMap] = useState(false);
@@ -61,9 +61,7 @@ function Homepage() {
   }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+    const handleResize = () => { setIsMobile(window.innerWidth < 768); };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -135,23 +133,39 @@ function Homepage() {
   };
 
   return (
-    <div className="min-h-screen bg-purple-50 p-1">
+    <div>
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between">
-          <h1 className="text-2xl font-bold text-purple-900 mb-6 text-center">Kalendarz Promocji</h1>
-          
-          {/* Language Selector */}
-          <div className="mb-6 text-right">
-            <select
-              value={locale}
-              onChange={(e) => setLocale(e.target.value)}
-              className="block rounded-md border-purple-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
-            >
-              <option value="en">English</option>
-              <option value="pl">Polish</option>
-            </select>
+
+        <nav className="max-w-7xl mx-auto bg-white rounded-md shadow md:my-4 my-2 dark:bg-gray-800">
+          <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 md:p-4">
+            <a href="https://kalendarzpromocji.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
+              <img src="logo.png" className="md:block hidden h-10" alt="kalendarzpromocji Logo" />
+              <img src="logo-mobile.png" className="md:hidden h-7" alt="kalendarzpromocji Logo" />
+            </a>
+
+            <button data-collapse-toggle="navbar-default" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+              <span className="sr-only">Open main menu</span>
+              <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
+              </svg>
+            </button>
+            <div className="hidden w-full md:block md:w-auto" id="navbar-default">
+              <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <li>
+                  {/*<a href="#" className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Home</a>*/}
+                    <select
+                      value={locale}
+                      onChange={(e) => setLocale(e.target.value)}
+                      className="block rounded-md border-purple-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+                    >
+                      <option value="en">English</option>
+                      <option value="pl">Polish</option>
+                    </select>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
+        </nav>
 
         {/* Filters and View Toggle */}
         <div className="flex gap-2 justify-between mb-6">

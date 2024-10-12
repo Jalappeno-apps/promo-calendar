@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Kalendarz Promocji | Exclusive Deals & Offers</title>
+    <title><%= I18n.t('meta.title') %></title>
 
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Discover the best restaurant deals and promotions in your city. View calendar for exclusive offers, discounts, happy hours, and more from top restaurants.">
-    <meta name="keywords" content="restaurant deals, restaurant promotions, discounts, happy hours, dining offers, food deals, calendar of promotions, best restaurants, exclusive offers">
+    <meta name="description" content="<%= I18n.t('meta.description') %>">
+    <meta name="keywords" content="<%= I18n.t('meta.keywords') %>">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Kalendarz Promocji">
 
     <!-- Open Graph Meta Tags (for Social Sharing) -->
-    <meta property="og:title" content="Kalendarz Promocji| Exclusive Deals & Offers">
-    <meta property="og:description" content="Stay updated with the latest restaurant promotions, discounts, and offers. Explore Kalendarz Promocji for the best dining deals in your city.">
-    <meta property="og:image" content="https://kalendarzpromocji.com/images/restaurant-promotions.jpg"> <!-- Replace with your image URL -->
+    <meta property="og:title" content="<%= I18n.t('meta.title') %>">
+    <meta property="og:description" content="<%= I18n.t('meta.description') %>">
+    <meta property="og:image" content="https://kalendarzpromocji.com/logo.png">
     <meta property="og:url" content="https://kalendarzpromocji.com">
     <meta property="og:type" content="website">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Kalendarz Promocji | Exclusive Deals & Offers ">
-    <meta name="twitter:description" content="Find the best restaurant deals in your city. View our promotion calendar for exclusive offers, discounts, and promotions.">
-    <meta name="twitter:image" content="https://kalendarzpromocji.com/images/restaurant-promotions.jpg"> <!-- Replace with your image URL -->
+    <meta name="twitter:title" content="<%= I18n.t('meta.title') %>">
+    <meta name="twitter:description" content="<%= I18n.t('meta.description') %>">
+    <meta name="twitter:image" content="https://kalendarzpromocji.com/logo.png">
 
     <!-- Viewport and Mobile Optimization -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +28,22 @@
 
     <!-- Optional SEO Tags -->
     <link rel="canonical" href="https://kalendarzpromocji.com">
-    <meta name="theme-color" content="#6B46C1"> <!-- Customize to match your website's branding -->
+    <meta name="theme-color" content="#6d28d9">
+
+    <!-- Favicon Metadata -->
+    <link rel="icon" href="/180icon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/180icon.png" type="image/x-icon">
+
+    <!-- Optional for Different Devices -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/180icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/32icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/16icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/path-to-your-favicon/safari-pinned-tab.svg" color="#6d28d9">
+
+    <!-- Favicon Color Meta for Windows Tiles -->
+    <meta name="msapplication-TileColor" content="#6d28d9">
+    <meta name="theme-color" content="#6d28d9">
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -44,7 +59,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   </head>
 
-  <body>
+  <body class="min-h-screen bg-purple-50 p-1">
     <%= yield %>
+    <%= render "layouts/footer" %>
   </body>
 </html>

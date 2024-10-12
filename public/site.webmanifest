@@ -1,0 +1,33 @@
+{
+  "name": "Kalendarz Promocji",
+  "short_name": "Promocji",
+  "description": "Discover the best restaurant deals and promotions in your city with Kalendarz Promocji.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#D9D9D9",
+  "theme_color": "#6d28d9",
+  "icons": [
+    {
+      "src": "/192icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/512icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/32icon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/16icon.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
