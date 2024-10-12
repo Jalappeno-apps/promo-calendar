@@ -42,7 +42,7 @@ export function MobileMap({ isMapExpanded, toggleMapExpansion, selectedCity, set
       >
         <div className="absolute right-0" style={{zIndex: 5000}} onClick={toggleMapExpansion}> ZOOM </div>
         <MapContainer 
-          center={[selectedCity.coordinates?.latitude, selectedCity.coordinates?.longitude]}
+          center={[(selectedCity.coordinates?.latitude || '52.2297'), (selectedCity.coordinates?.longitude || '21.0122')]}
           zoom={11} 
           style={{ height: '100%', width: '100%' }}
           ref={setMap}
@@ -117,7 +117,7 @@ export function DesktopMap ({ isMapExpanded, toggleMapExpansion, selectedCity, s
       </div>
       <div className="z-10  w-full md:w-2/3 h-full">
         <MapContainer 
-          center={[selectedCity.coordinates?.latitude, selectedCity.coordinates?.longitude]}
+          center={[(selectedCity.coordinates?.latitude || '52.2297'), (selectedCity.coordinates?.longitude || '21.0122')]}
           zoom={11} 
           style={{ height: '100%', width: '100%' }}
           ref={setMap}
