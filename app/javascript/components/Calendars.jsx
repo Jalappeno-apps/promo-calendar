@@ -41,7 +41,7 @@ export function MobileCalendar({ filteredPromotions, locale, handleEventClick })
         start: today,               // The user can navigate from today
         end: oneMonthLater          // Until one month later
       }}
-      dateSet={(info) => {
+      datesSet={(info) => {
         const currentDate = info.start;
         if (currentDate > oneMonthLater) {
           // Navigate back if user attempts to go beyond the valid range
@@ -82,7 +82,7 @@ export function DesktopCalendar({ filteredPromotions, locale, handleEventClick }
         start: today,               // The user can navigate from today
         end: oneMonthLater          // Until one month later
       }}
-      dateSet={(info) => {
+      datesSet={(info) => {
         const currentDate = info.start;
         if (currentDate > oneMonthLater) {
           // Navigate back if user attempts to go beyond the valid range
