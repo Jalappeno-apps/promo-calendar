@@ -44,13 +44,14 @@ export function MobileMap({ isMapExpanded, toggleMapExpansion, selectedCity, set
         <MapContainer 
           center={[(selectedCity.coordinates?.latitude || '52.2297'), (selectedCity.coordinates?.longitude || '21.0122')]}
           zoom={11} 
-          style={{ height: '100%', width: '100%' }}
+          style={{ minHeight: '150px', height: '100%', width: '100%' }}
           ref={setMap}
           scrollWheelZoom={false}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+
           />
           <MapEventHandler onMoveEnd={debouncedHandleMapMoveEnd} />
           {filteredPromotions.map((promo, index) => (
@@ -66,8 +67,7 @@ export function MobileMap({ isMapExpanded, toggleMapExpansion, selectedCity, set
           ))}
         </MapContainer>
       </div>
-      <div className="list-container">
-        <h2 className="text-xl font-bold mb-4">Promotions</h2>
+      <div className="list-container z-10 rounded-md">
         {visiblePromotions.map((promo, index) => (
           <div 
             key={index} 

@@ -143,7 +143,6 @@ function Homepage() {
   return (
     <div>
       <div className="max-w-7xl mx-auto">
-
         <nav className="max-w-7xl mx-auto bg-white rounded-md shadow md:my-4 my-2 dark:bg-gray-800">
           <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 md:p-4">
             <a href="https://kalendarzpromocji.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -276,7 +275,7 @@ function Homepage() {
             <p><strong>Date:</strong> {formatDate(selectedOffer.start)}</p>
             <p><strong>Time:</strong> {formatTime(selectedOffer.start)} - {formatTime(selectedOffer.end)}</p>
             <p><strong>Description:</strong> {selectedOffer.description}</p>
-            <div className="flex gap-2 jusify-between w-full">
+            <div className="flex md:gap-2 gap-1 jusify-between w-full">
               <a 
                 className="cursor-pointer mt-4 text-center bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition duration-300 w-full"
               >
