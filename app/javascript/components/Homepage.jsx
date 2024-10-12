@@ -7,7 +7,6 @@ import axios from 'axios';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
 
-import 'leaflet/dist/leaflet.css';
 import './styles/Homepage.css';
 
 const API_URL = "/api/v1";

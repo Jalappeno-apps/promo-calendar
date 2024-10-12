@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 're
 import React, { useState, useEffect, useRef } from 'react';
 import { format, addMonths } from 'date-fns';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const formatDate = (date) => {
   if (!date) return '';
