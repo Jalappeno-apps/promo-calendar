@@ -62,5 +62,14 @@
   <body class="min-h-screen bg-purple-50 p-1">
     <%= yield %>
     <%= render "layouts/footer" %>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= Rails.application.credentials.dig(:ga_tag) %>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', "<%= Rails.application.credentials.dig(:ga_tag) %>");
+    </script>
   </body>
 </html>

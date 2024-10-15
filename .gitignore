@@ -40,3 +40,6 @@
 /node_modules
 .byebug_history
 .DS_Store
+/config/credentials/development.key
+
+/config/credentials/production.key
